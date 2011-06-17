@@ -49,7 +49,8 @@ class Channelizer : public CLAM::Processing
 	unsigned windowSNS; //speech or no speech
 	// NEW: changed from int to float
 	float total;
-	float totalAllWindows; //cchien
+	float totalLogEnergy; //cchien total log energy (each buffer)
+	float logEnergyCount; //cchien used in log energy average
 
 
 public:
@@ -91,7 +92,7 @@ public:
 		pData = new short[windowSize];	
 		windowSNS = 0;
 		total = 0;
-		totalAllWindows=0; //cchien
+		totalLogEnergy=0; //cchien
 		state = NOT_TALKING;
 		floorAction = NO_FLOOR;
 		overlapCounter = 0;
@@ -99,6 +100,8 @@ public:
 		isDominant = false;		
 		isBeingBeeped = false;
 		isGonnaGetBeeped = false;
+
+		logEnergyCount = 0.0;
 	}
 	
 
@@ -118,6 +121,8 @@ public:
 			if (current<-_max) _max=-current;
 		}
 		logEnergy = 60 + 20*log(_max);
+		totalLogEnergy += logEnergy; //cchien
+		logEnergyCount++; // used in log energy average 
 		if (logEnergy > 15) bufferSNS = 1;
 		_bufferCount++;
 		_max = 1e-10;
@@ -134,9 +139,7 @@ public:
 			}
  		}
 		else 
-		{	totalAllWindows += total;
-			printf("total is %d, totalAllWindows is %d", total, totalAllWindows);
-			total -= pData[_bufferCount % windowSize];
+		{	total -= pData[_bufferCount % windowSize];
 			pData[_bufferCount % windowSize] = bufferSNS;
 			total += bufferSNS;
 			//printf("bufferCount: %d, index: %d, bufferSNS: %d\n", _bufferCount, (_bufferCount % windowSize), bufferSNS);
@@ -183,6 +186,7 @@ public:
 			state = NOT_TALKING;
 		}
 
+		/*
 		//PGAO		
 		if(logEnergy<15){
 			loudSoft=-1;
@@ -193,7 +197,19 @@ public:
 		else{
 			loudSoft=0;
 		}
-		
+		*/
+
+		//cchien log energy average
+		float logEnergyAvg = totalLogEnergy / logEnergyCount;
+		if(logEnergyAvg<15){
+			loudSoft=-1;
+		}
+		else if(logEnergyAvg>30){
+			loudSoft=1;
+		}
+		else{
+			loudSoft=0;
+		}
 		
 		//std::cout << "\t windowSNS: " << windowSNS << ", state: " << std::hex << state << std::endl;
 		gettimeofday(&_endtime,0x0);		
