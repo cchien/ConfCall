@@ -39,7 +39,7 @@ class Channelizer : public CLAM::Processing
 {
 	AudioInPort _input;
 	double _max;
-	
+	int loudSoft; //-1 means the input sound is too soft, 1 too loud, 0 alright
 	float _average;
 	unsigned _bufferCount;
 	std::string _name;
@@ -49,6 +49,7 @@ class Channelizer : public CLAM::Processing
 	unsigned windowSNS; //speech or no speech
 	// NEW: changed from int to float
 	float total;
+	float totalAllWindows; //cchien
 
 
 public:
@@ -76,7 +77,8 @@ public:
 		totalSpeakingInterrupts = 0;					// TSI: # times barge in
 		totalSpeakingSuccessfulInterrupts = 0;				// TSSI: # times successful barge in
 		totalSpeakingUnsuccessfulInterrupts = 0;			// TSUI: # times unsuccessful barge in
-		_average = 0.0;		
+		_average = 0.0;	
+		loudSoft=0;	
 		diffTime = 0.0;
 		gettimeofday(&_starttime,0x0);		
 		gettimeofday(&_endtime,0x0);
@@ -89,6 +91,7 @@ public:
 		pData = new short[windowSize];	
 		windowSNS = 0;
 		total = 0;
+		totalAllWindows=0; //cchien
 		state = NOT_TALKING;
 		floorAction = NO_FLOOR;
 		overlapCounter = 0;
@@ -127,11 +130,12 @@ public:
 			//printf("window size is %d, bufferCount is %d, total is %f\n", windowSize, _bufferCount, total);
 			if (windowSize - _bufferCount == 1) {
 				_average = total/(float)windowSize; 
-				std::cout << "** setting average! its " << _average << std::endl;
+			//	std::cout << "** setting average! its " << _average << std::endl;
 			}
  		}
-		else windows
-		{
+		else 
+		{	totalAllWindows += total;
+			printf("total is %d, totalAllWindows is %d", total, totalAllWindows);
 			total -= pData[_bufferCount % windowSize];
 			pData[_bufferCount % windowSize] = bufferSNS;
 			total += bufferSNS;
@@ -178,6 +182,19 @@ public:
 			//std::cout << "stopped talking!\n";
 			state = NOT_TALKING;
 		}
+
+		//PGAO		
+		if(logEnergy<15){
+			loudSoft=-1;
+		}
+		else if(logEnergy>30){
+			loudSoft=1;
+		}
+		else{
+			loudSoft=0;
+		}
+		
+		
 		//std::cout << "\t windowSNS: " << windowSNS << ", state: " << std::hex << state << std::endl;
 		gettimeofday(&_endtime,0x0);		
 		timeval_subtract(&_timediff, &_endtime, &_sessionStart);
@@ -242,6 +259,16 @@ public:
 		std::cout << "\t" << _name << " Dominance Percentage: " << totalActivityLevel*100 << "%\n";
 		std::cout << "\t" << _name << " Is Dominant: ";
 	       (isDominant) ? std::cout	<< "YES\n" : std::cout << "NO\n";
+
+		//PGAO
+		if(loudSoft<0){
+			std::cout << "\t" << _name << ", you are speaking too softly!\n";
+		}
+		else if(loudSoft>0){
+			std::cout << "\t" << _name << ", you are speaking too loudly!\n";
+		}
+		loudSoft=0;
+
 		std::cout << "\t" << _name << " Session Time: " << sessionTime << " sec\n";
 	}
 
@@ -274,6 +301,23 @@ public:
 		dataFile.close();
 		cumulativeLogFile.close();
 	}
+	/*
+	//cchien
+	//running average volume monitor
+	//takes an average of the total volume of speaking without utterances
+	//prints message if the average volume lies below lowThreshold or above highThreshold
+	void monitorVolume()
+	{	float lowThreshold = 0.6; // arbitrary constant; below 0.5 is non-speaking
+		float highThreshold = 0.8; // arbitrary constant
+		sum = 0;
+		while true()
+		{	sum += data[?];
+			float avg = totalAllWindows/totalSpeakingLength;
+			if (avg < threshold) printf(_name + " volume too low.");
+			if (avg > threshold) printf(_name + " volume too high.");
+		}
+	}
+	*/
 };
 
 } //namespace
