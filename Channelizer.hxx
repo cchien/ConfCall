@@ -49,9 +49,10 @@ class Channelizer : public CLAM::Processing
 	unsigned windowSNS; //speech or no speech
 	// NEW: changed from int to float
 	float total;
-	float totalLogEnergy; //cchien total log energy (each buffer)
-	float logEnergyCount; //cchien used in log energy average
-
+	float totalEnergySpeaking; //cchien total log energy when speaking (each buffer)
+	float energySpeakingCount; //cchien used in log energy average
+	float totalEnergyNotSpeaking; //cchien total log energy noise floor (each buffer)
+	float energyNotSpeakingCount; //cchien used in log energy noise floor average
 
 public:
 	double logEnergy;
@@ -92,7 +93,10 @@ public:
 		pData = new short[windowSize];	
 		windowSNS = 0;
 		total = 0;
-		totalLogEnergy=0; //cchien
+		totalEnergySpeaking = 0.0; //cchien total log energy when speaking (each buffer)
+		energySpeakingCount = 0.0; //cchien used in log energy average
+		totalEnergyNotSpeaking = 0.0; //cchien total log energy noise floor (each buffer)
+		energyNotSpeakingCount = 0.0; //cchien used in log energy noise floor average
 		state = NOT_TALKING;
 		floorAction = NO_FLOOR;
 		overlapCounter = 0;
@@ -100,8 +104,6 @@ public:
 		isDominant = false;		
 		isBeingBeeped = false;
 		isGonnaGetBeeped = false;
-
-		logEnergyCount = 0.0;
 	}
 	
 
@@ -121,9 +123,15 @@ public:
 			if (current<-_max) _max=-current;
 		}
 		logEnergy = 60 + 20*log(_max);
-		totalLogEnergy += logEnergy; //cchien
-		logEnergyCount++; // used in log energy average 
-		if (logEnergy > 15) bufferSNS = 1;
+		if (logEnergy > 15)
+		{	bufferSNS = 1;
+			totalEnergySpeaking += logEnergy; //cchien
+			energySpeakingCount ++; // used in log energy average 
+		}
+		else
+		{	totalEnergyNotSpeaking += logEnergy;
+			energyNotSpeakingCount ++;
+		}
 		_bufferCount++;
 		_max = 1e-10;
 
@@ -199,17 +207,24 @@ public:
 		}
 		*/
 
-		//cchien log energy average
-		float logEnergyAvg = totalLogEnergy / logEnergyCount;
-		if(logEnergyAvg<15){
-			loudSoft=-1;
+		//cchien signal to noise ratio estimate
+		float energySpeakingAvg = totalEnergySpeaking / energySpeakingCount;
+		float energyNotSpeakingAvg = totalEnergyNotSpeaking / energyNotSpeakingCount;
+		float signalToNoise = fabs(energySpeakingAvg - energyNotSpeakingAvg)/energyNotSpeakingAvg;
+		printf("S:N %f\n",signalToNoise);
+		
+		/*
+		float lowNoise = 0;
+		float highNoise = 100;
+		float lowSR = 0;
+		float highSR = 100;
+		if (energyNotSpeakingAvg < lowNoise)
+		{	if (signalToNoise < lowSR) printf("You are speaking too softly.");
+			else printf("Your mic volume is too low.");
 		}
-		else if(logEnergyAvg>30){
-			loudSoft=1;
-		}
-		else{
-			loudSoft=0;
-		}
+		*/
+		
+		
 		
 		//std::cout << "\t windowSNS: " << windowSNS << ", state: " << std::hex << state << std::endl;
 		gettimeofday(&_endtime,0x0);		
@@ -276,6 +291,7 @@ public:
 		std::cout << "\t" << _name << " Is Dominant: ";
 	       (isDominant) ? std::cout	<< "YES\n" : std::cout << "NO\n";
 
+		/*
 		//PGAO
 		if(loudSoft<0){
 			std::cout << "\t" << _name << ", you are speaking too softly!\n";
@@ -286,13 +302,19 @@ public:
 		loudSoft=0;
 
 		std::cout << "\t" << _name << " Session Time: " << sessionTime << " sec\n";
+		*/
+
 	}
+
 
 	void writeSpeakerStats() {
 		std::ofstream cumulativeLogFile;
 		std::ofstream dataFile;
+		std::ofstream volFile; //cchien
+
 		cumulativeLogFile.open("multiPartySpeechData.log", std::ios::app);
 		dataFile.open("multiPartySpeechData.xml");
+		volFile.open("VolumeData.log", std::ios::app);
 
 		dataFile << "<Channel>\n";
 		dataFile << "<name>" << _name << "</name>\n";
@@ -314,28 +336,19 @@ public:
 		cumulativeLogFile << "<dominancePercentage>" << totalActivityLevel*100 << "</dominancePercentage>\n";
 		cumulativeLogFile << "</Channel>\n\n";
 
+		float energySpeakingAvg = totalEnergySpeaking / energySpeakingCount;
+		float energyNotSpeakingAvg = totalEnergyNotSpeaking / energyNotSpeakingCount;
+		float signalToNoise = fabs(energySpeakingAvg - energyNotSpeakingAvg)/energyNotSpeakingAvg;
+		volFile << "Speaking\tNot Speaking\tS-to-R\n";
+		volFile << energySpeakingAvg << "\t" << energyNotSpeakingAvg << "\t" << signalToNoise <<"\n";
+
 		dataFile.close();
 		cumulativeLogFile.close();
+		volFile.close();
 	}
-	/*
-	//cchien
-	//running average volume monitor
-	//takes an average of the total volume of speaking without utterances
-	//prints message if the average volume lies below lowThreshold or above highThreshold
-	void monitorVolume()
-	{	float lowThreshold = 0.6; // arbitrary constant; below 0.5 is non-speaking
-		float highThreshold = 0.8; // arbitrary constant
-		sum = 0;
-		while true()
-		{	sum += data[?];
-			float avg = totalAllWindows/totalSpeakingLength;
-			if (avg < threshold) printf(_name + " volume too low.");
-			if (avg > threshold) printf(_name + " volume too high.");
-		}
-	}
-	*/
 };
 
 } //namespace
 
 #endif
+
