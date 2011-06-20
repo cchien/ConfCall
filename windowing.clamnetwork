@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<network clamVersion="1.4.1" id="Unnamed">
+
+  <description>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</description>
+
+  <processing id="Amp" position="314,121" size="159,57" type="AudioAmplifier">
+    <MaxGain>1</MaxGain>
+    <InitGain>1</InitGain>
+    <PortsNumber>1</PortsNumber>
+    <DoesGainInterpolation>1</DoesGainInterpolation>
+  </processing>
+
+  <processing id="Amp_1" position="314,173" size="159,57" type="AudioAmplifier">
+    <MaxGain>1</MaxGain>
+    <InitGain>1</InitGain>
+    <PortsNumber>1</PortsNumber>
+    <DoesGainInterpolation>1</DoesGainInterpolation>
+  </processing>
+
+  <processing id="Amp_2" position="314,225" size="159,57" type="AudioAmplifier">
+    <MaxGain>1</MaxGain>
+    <InitGain>1</InitGain>
+    <PortsNumber>1</PortsNumber>
+    <DoesGainInterpolation>1</DoesGainInterpolation>
+  </processing>
+
+  <processing id="Amp_3" position="314,277" size="159,57" type="AudioAmplifier">
+    <MaxGain>1</MaxGain>
+    <InitGain>1</InitGain>
+    <PortsNumber>1</PortsNumber>
+    <DoesGainInterpolation>1</DoesGainInterpolation>
+  </processing>
+
+  <processing id="Amplitude" position="97,656" size="191,78" type="OutControlSender">
+    <Min>0</Min>
+    <Default>0.5</Default>
+    <Max>1</Max>
+    <Step>0.01</Step>
+    <ControlRepresentation>Horizontal Slider</ControlRepresentation>
+    <Mapping>Linear</Mapping>
+  </processing>
+
+  <processing id="AudioMixer" position="649,214" size="135,110" type="AudioMixer">
+    <NumberOfInPorts>5</NumberOfInPorts>
+    <DefaultGains size="5">1 1 1 1 1</DefaultGains>
+  </processing>
+
+  <processing id="AudioMixer_1" position="646,342" size="150,110" type="AudioMixer">
+    <NumberOfInPorts>5</NumberOfInPorts>
+    <DefaultGains size="5">1 1 1 1 1</DefaultGains>
+  </processing>
+
+  <processing id="AudioMixer_2" position="647,465" size="150,110" type="AudioMixer">
+    <NumberOfInPorts>5</NumberOfInPorts>
+    <DefaultGains size="5">1 1 1 1 1</DefaultGains>
+  </processing>
+
+  <processing id="AudioMixer_3" position="649,567" size="150,110" type="AudioMixer">
+    <NumberOfInPorts>5</NumberOfInPorts>
+    <DefaultGains size="5">1 1 1 1 1</DefaultGains>
+  </processing>
+
+  <processing id="AudioSink" position="1140,271" size="128,111" type="AudioSink">
+    <NSinks>4</NSinks>
+  </processing>
+
+  <processing id="AudioSource" position="50,283" size="142,108" type="AudioSource">
+    <NSources>4</NSources>
+  </processing>
+
+  <processing id="Channelizer" position="639,-2" size="134,57" type="Channelizer"/>
+
+  <processing id="Channelizer_1" position="639,45" size="149,57" type="Channelizer"/>
+
+  <processing id="Channelizer_2" position="639,95" size="149,57" type="Channelizer"/>
+
+  <processing id="Channelizer_3" position="639,143" size="149,57" type="Channelizer"/>
+
+  <processing id="Generator" position="340,664" size="168,57" type="SimpleOscillator">
+    <Frequency>440</Frequency>
+    <Amplitude>1</Amplitude>
+    <Phase>0</Phase>
+    <SamplingRate>16000</SamplingRate>
+  </processing>
+
+  <processing id="SimpleOscillator" position="35,405" size="168,57" type="SimpleOscillator">
+    <Frequency>261.626</Frequency>
+    <Amplitude>0.5</Amplitude>
+    <Phase>0</Phase>
+    <SamplingRate>44100</SamplingRate>
+  </processing>
+
+  <processing id="SimpleOscillator_1" position="36,459" size="183,57" type="SimpleOscillator">
+    <Frequency>329.628</Frequency>
+    <Amplitude>0.5</Amplitude>
+    <Phase>0</Phase>
+    <SamplingRate>44100</SamplingRate>
+  </processing>
+
+  <processing id="SimpleOscillator_2" position="35,508" size="183,57" type="SimpleOscillator">
+    <Frequency>391.995</Frequency>
+    <Amplitude>0.5</Amplitude>
+    <Phase>0</Phase>
+    <SamplingRate>44100</SamplingRate>
+  </processing>
+
+  <processing id="SimpleOscillator_3" position="34,562" size="183,57" type="SimpleOscillator">
+    <Frequency>466.164</Frequency>
+    <Amplitude>0.5</Amplitude>
+    <Phase>0</Phase>
+    <SamplingRate>44100</SamplingRate>
+  </processing>
+
+  <processing id="Tones" position="236,462" size="134,94" type="AudioMixer">
+    <NumberOfInPorts>4</NumberOfInPorts>
+    <DefaultGains size="4">1 1 1 1</DefaultGains>
+  </processing>
+
+  <port_connection>
+    <out>Amp.Audio Output</out>
+    <in>AudioMixer_1.Input 0</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp.Audio Output</out>
+    <in>AudioMixer_2.Input 0</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp.Audio Output</out>
+    <in>AudioMixer_3.Input 0</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp.Audio Output</out>
+    <in>Channelizer.Input</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_1.Audio Output</out>
+    <in>AudioMixer.Input 0</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_1.Audio Output</out>
+    <in>AudioMixer_2.Input 1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_1.Audio Output</out>
+    <in>AudioMixer_3.Input 1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_1.Audio Output</out>
+    <in>Channelizer_1.Input</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_2.Audio Output</out>
+    <in>AudioMixer.Input 1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_2.Audio Output</out>
+    <in>AudioMixer_1.Input 1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_2.Audio Output</out>
+    <in>AudioMixer_3.Input 2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_2.Audio Output</out>
+    <in>Channelizer_2.Input</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_3.Audio Output</out>
+    <in>AudioMixer.Input 2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_3.Audio Output</out>
+    <in>AudioMixer_1.Input 2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_3.Audio Output</out>
+    <in>AudioMixer_2.Input 2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Amp_3.Audio Output</out>
+    <in>Channelizer_3.Input</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioMixer.Output Audio</out>
+    <in>AudioSink.1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioMixer_1.Output Audio</out>
+    <in>AudioSink.2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioMixer_2.Output Audio</out>
+    <in>AudioSink.3</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioMixer_3.Output Audio</out>
+    <in>AudioSink.4</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioSource.1</out>
+    <in>Amp.Input Audio</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioSource.2</out>
+    <in>Amp_1.Input Audio</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioSource.3</out>
+    <in>Amp_2.Input Audio</in>
+  </port_connection>
+
+  <port_connection>
+    <out>AudioSource.4</out>
+    <in>Amp_3.Input Audio</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Generator.Audio Output</out>
+    <in>AudioMixer_1.Input 3</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Generator.Audio Output</out>
+    <in>AudioMixer_2.Input 3</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Generator.Audio Output</out>
+    <in>AudioMixer_3.Input 3</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Generator.Audio Output</out>
+    <in>AudioMixer.Input 3</in>
+  </port_connection>
+
+  <port_connection>
+    <out>SimpleOscillator.Audio Output</out>
+    <in>Tones.Input 0</in>
+  </port_connection>
+
+  <port_connection>
+    <out>SimpleOscillator_1.Audio Output</out>
+    <in>Tones.Input 1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>SimpleOscillator_2.Audio Output</out>
+    <in>Tones.Input 2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>SimpleOscillator_3.Audio Output</out>
+    <in>Tones.Input 3</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Tones.Output Audio</out>
+    <in>AudioMixer.Input 4</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Tones.Output Audio</out>
+    <in>AudioMixer_1.Input 4</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Tones.Output Audio</out>
+    <in>AudioMixer_2.Input 4</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Tones.Output Audio</out>
+    <in>AudioMixer_3.Input 4</in>
+  </port_connection>
+
+  <control_connection>
+    <out>Amplitude.out</out>
+    <in>Generator.Amplitude</in>
+  </control_connection>
+
+</network>
