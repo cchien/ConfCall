@@ -211,18 +211,17 @@ public:
 		float energySpeakingAvg = totalEnergySpeaking / energySpeakingCount;
 		float energyNotSpeakingAvg = totalEnergyNotSpeaking / energyNotSpeakingCount;
 		float signalToNoise = fabs(energySpeakingAvg - energyNotSpeakingAvg)/energyNotSpeakingAvg;
-		printf("S:N %f\n",signalToNoise);
 		
-		/*
-		float lowNoise = 0;
-		float highNoise = 100;
-		float lowSR = 0;
-		float highSR = 100;
+		
+		float lowNoise = -2.0;
+		float highNoise = -1.2;
+		float lowSR = -23;
+		float highSR = -15;
 		if (energyNotSpeakingAvg < lowNoise)
-		{	if (signalToNoise < lowSR) printf("You are speaking too softly.");
-			else printf("Your mic volume is too low.");
+		{	if (signalToNoise < lowSR) printf("You are speaking too softly.\n");
+			else printf("Your mic volume is too low.\n");
 		}
-		*/
+		
 		
 		
 		

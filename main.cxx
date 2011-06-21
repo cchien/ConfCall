@@ -46,12 +46,19 @@ bool isOverlapping = false;
 double diffTime = 0.0;
 
 // White Noise (or tone) Channel Identification
-// Each channel has a specific tone identified with it. When no one is speaking, all tones are heard.
-// When a someone is speaking, only the speaker's tone is heard
+// Each channel has a specific tone identified with it. All channels can hear all tones.
+// When a someone is speaking, only the speaker's tone is heard.
+
+
 // cchien
-void playNoise(CLAM::Channelizer* channels[],CLAM::Processing* tones[])	
-{	while(true)
-	{	//No one speaking
+
+
+
+void playNoise(CLAM::Channelizer* channels[],CLAM::Processing* tones[]){
+	
+	while(true){
+	//No one speaking
+
 		for (int i=0; i<4; i++)
 		{	//Someone speaking
 			if (IS_STILL_TALKING(channels[i]->state))
@@ -60,6 +67,7 @@ void playNoise(CLAM::Channelizer* channels[],CLAM::Processing* tones[])
 					else CLAM::SendFloatToInControl(*(tones[j]), "Amplitude", 0.0);
 				}
 			}
+	
 			//No one speaking
 			else
 			{	for (int j=0; j<4; j++)
@@ -69,6 +77,8 @@ void playNoise(CLAM::Channelizer* channels[],CLAM::Processing* tones[])
 		}
 	}
 }
+
+
 
 /*
 //PGAO
@@ -502,15 +512,7 @@ int main( int argc, char** argv )
 		while(1) 
 		{		
 			prevMsg = updateFloorStuff(channels, prevMsg, mixers);
-			
-			//cchien
 			playNoise(channels, tones);
-			/*
-			myp1.monitorVolume(); 
-			myp2.monitorVolume();
-			myp3.monitorVolume();
-			myp4.monitorVolume();	
-			*/	
 
 			//std::cout << "speaketh\t" << myp3.logEnergy << "\t" << myp4.logEnergy << std::endl;
 			//CLAM::SendFloatToInControl(generator,"Amplitude",0.8);

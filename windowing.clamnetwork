@@ -87,37 +87,33 @@ p, li { white-space: pre-wrap; }
     <SamplingRate>16000</SamplingRate>
   </processing>
 
-  <processing id="SimpleOscillator" position="35,405" size="168,57" type="SimpleOscillator">
-    <Frequency>261.626</Frequency>
-    <Amplitude>0.5</Amplitude>
-    <Phase>0</Phase>
-    <SamplingRate>44100</SamplingRate>
-  </processing>
-
-  <processing id="SimpleOscillator_1" position="36,459" size="183,57" type="SimpleOscillator">
-    <Frequency>329.628</Frequency>
-    <Amplitude>0.5</Amplitude>
-    <Phase>0</Phase>
-    <SamplingRate>44100</SamplingRate>
-  </processing>
-
-  <processing id="SimpleOscillator_2" position="35,508" size="183,57" type="SimpleOscillator">
-    <Frequency>391.995</Frequency>
-    <Amplitude>0.5</Amplitude>
-    <Phase>0</Phase>
-    <SamplingRate>44100</SamplingRate>
-  </processing>
-
-  <processing id="SimpleOscillator_3" position="34,562" size="183,57" type="SimpleOscillator">
-    <Frequency>466.164</Frequency>
-    <Amplitude>0.5</Amplitude>
-    <Phase>0</Phase>
-    <SamplingRate>44100</SamplingRate>
-  </processing>
-
   <processing id="Tones" position="236,462" size="134,94" type="AudioMixer">
     <NumberOfInPorts>4</NumberOfInPorts>
     <DefaultGains size="4">1 1 1 1</DefaultGains>
+  </processing>
+
+  <processing id="Track" position="-2,408" size="207,57" type="MonoAudioFileReader">
+    <SourceFile>/home/christine/Desktop/Link to Project/Beats/bassline.mp3</SourceFile>
+    <SelectedChannel>0</SelectedChannel>
+    <Loop>1</Loop>
+  </processing>
+
+  <processing id="Track_1" position="-6,469" size="222,57" type="MonoAudioFileReader">
+    <SourceFile>/home/christine/Desktop/Link to Project/Beats/piano.mp3</SourceFile>
+    <SelectedChannel>0</SelectedChannel>
+    <Loop>0</Loop>
+  </processing>
+
+  <processing id="Track_2" position="-7,532" size="222,57" type="MonoAudioFileReader">
+    <SourceFile>/home/christine/Desktop/Link to Project/Beats/geetar.mp3</SourceFile>
+    <SelectedChannel>0</SelectedChannel>
+    <Loop>0</Loop>
+  </processing>
+
+  <processing id="Track_3" position="-5,591" size="222,57" type="MonoAudioFileReader">
+    <SourceFile>/home/christine/Desktop/Link to Project/Beats/drums.mp3</SourceFile>
+    <SelectedChannel>0</SelectedChannel>
+    <Loop>0</Loop>
   </processing>
 
   <port_connection>
@@ -261,26 +257,6 @@ p, li { white-space: pre-wrap; }
   </port_connection>
 
   <port_connection>
-    <out>SimpleOscillator.Audio Output</out>
-    <in>Tones.Input 0</in>
-  </port_connection>
-
-  <port_connection>
-    <out>SimpleOscillator_1.Audio Output</out>
-    <in>Tones.Input 1</in>
-  </port_connection>
-
-  <port_connection>
-    <out>SimpleOscillator_2.Audio Output</out>
-    <in>Tones.Input 2</in>
-  </port_connection>
-
-  <port_connection>
-    <out>SimpleOscillator_3.Audio Output</out>
-    <in>Tones.Input 3</in>
-  </port_connection>
-
-  <port_connection>
     <out>Tones.Output Audio</out>
     <in>AudioMixer.Input 4</in>
   </port_connection>
@@ -298,6 +274,26 @@ p, li { white-space: pre-wrap; }
   <port_connection>
     <out>Tones.Output Audio</out>
     <in>AudioMixer_3.Input 4</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Track.Samples Read</out>
+    <in>Tones.Input 0</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Track_1.Samples Read</out>
+    <in>Tones.Input 1</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Track_2.Samples Read</out>
+    <in>Tones.Input 2</in>
+  </port_connection>
+
+  <port_connection>
+    <out>Track_3.Samples Read</out>
+    <in>Tones.Input 3</in>
   </port_connection>
 
   <control_connection>
