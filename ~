@@ -1,0 +1,94 @@
+
+#include "CLAM/Network.hxx"
+#include "CLAM/PushFlowControl.hxx"
+#include "CLAM/Err.hxx"
+#include "CLAM/SimpleOscillator.hxx"
+#include "CLAM/AudioMultiplier.hxx"
+#include "CLAM/AudioOut.hxx"
+#include <iostream>
+#include "CLAM/AudioManager.hxx"
+#include <CLAM/JACKNetworkPlayer.hxx>
+#include <jack/jack.h>
+#include "CLAM/OutControlSender.hxx"
+#include <CLAM/XMLStorage.hxx>
+#include "CLAM/WinProcessing.hxx"
+//#include <conio.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int error(const std::string & msg)
+{
+	std::cerr << msg << std::endl;
+	return -1;
+}
+
+int main( int argc, char** argv )
+{	
+	
+	try
+	{
+		// These values will be used in some configurations, so we declare it now.
+		int size = 512;
+		int sampleRate = 44100;
+
+		// We need to deploy the audio manager class in order to get audio sound.
+		CLAM::AudioManager manager( sampleRate, size );
+		//manager.Start();
+
+		// First of all we need to create a clam network. It isn't really complicated; just setting the name.
+		CLAM::Network network;
+		try
+		{
+			CLAM::XMLStorage::Restore(network, "/home/rahul/Project/MultiParty/emacspace/vumeter/windowing.clamnetwork");
+			//CLAM::XMLStorage::Restore(network, argv[1]);			
+		}
+		catch (CLAM::XmlStorageErr & e)
+		{
+			return error("Could not open the network file");
+		}
+		CLAM::Processing& generator = network.GetProcessing("Generator");
+		CLAM::Processing& mic = network.GetProcessing("AudioSource");
+		CLAM::WinProcessing& myp = (CLAM::WinProcessing&) network.GetProcessing("WinProcessing");
+
+		int winSize = mic.GetOutPort("1").GetSize();
+		myp.GetInPort("Input").SetSize(winSize);	
+
+		//JACK CODE
+         	jack_client_t * jackClient;
+         	std::string jackClientName;
+		jack_status_t jackStatus;
+		jackClient = jack_client_open ( "test", JackNullOption, &jackStatus );
+		network.SetPlayer(new CLAM::JACKNetworkPlayer("client1"));
+		network.Start();
+		jack_connect(jackClient, "system:capture_1", "client1:AudioSource");
+		jack_connect(jackClient, "client1:AudioSink", "system:playback_1");
+		
+		for (int i=0; i<1000; i++) {
+			for(int j=0; j<100; j++) {
+				if (myp.logEnergy > 10) {
+					std::cout << "speaketh\t" << myp.logEnergy << "\n";
+					CLAM::SendFloatToInControl(generator,"Amplitude",0.8);
+				}
+				else {
+					std::cout << "no input\t" << myp.logEnergy << "\n";
+					CLAM::SendFloatToInControl(generator,"Amplitude",0.0);
+				}
+				//if (kbhit()) {break;}
+			}
+		}
+		network.Stop();
+
+	}
+	catch ( CLAM::Err& e )
+	{
+		e.Print();
+		exit(-1);
+	}
+	catch( std::exception& e )
+	{
+		std::cerr << e.what() << std::endl;
+		exit(-1);		
+	}
+
+	return 0;
+}
