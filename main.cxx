@@ -44,6 +44,7 @@ double currOverlapLength = 0;
 struct timeval _currTime, _beepTimeDiff, _overlapStartTime;
 bool isOverlapping = false;
 double diffTime = 0.0;
+int numChannels; //need to test with netjack; to default, set numChannels = 4;
 
 // White Noise (or tone) Channel Identification
 // Each channel has a specific tone identified with it. All channels can hear all tones but their own.
@@ -59,7 +60,7 @@ inline void playTracks (CLAM::Channelizer* channels[],CLAM::Processing* tracks[]
        	   while(IS_NOT_TALKING(channels[0]->state)&&IS_NOT_TALKING(channels[1]->state)&&
            IS_NOT_TALKING(channels[2]->state)&&IS_NOT_TALKING(channels[3]->state)){
        
-               for(int i=0; i<4; i++){
+               for(int i=0; i<numChannels; i++){
                     CLAM::SendFloatToInControl(*(tracks[i]), "Gain", 5.0);
                }
        
@@ -67,7 +68,7 @@ inline void playTracks (CLAM::Channelizer* channels[],CLAM::Processing* tracks[]
 	
            //Person speaking
 	       /*
-	   for (int i=0; i<4; i++) {
+	   for (int i=0; i<numChannels; i++) {
 		if(IS_START_TALKING(channels[i]->state)){
 			CLAM::SendFloatToInControl(*(tracks[i]), "Gain", 5.0);
 		}
@@ -337,8 +338,8 @@ int main( int argc, char** argv )
 
 		try
 		{
-			//CLAM::XMLStorage::Restore(network, "/home/rahul/Project/MultiParty/emacspace/SNS5/windowing.clamnetwork");
-			CLAM::XMLStorage::Restore(network, "/home/christine/Project/sns5/windowing.clamnetwork");
+			CLAM::XMLStorage::Restore(network, "/home/rahul/Project/MultiParty/emacspace/SNS5/windowing.clamnetwork");
+			//CLAM::XMLStorage::Restore(network, "/home/christine/Project/sns5/windowing.clamnetwork");
 			//CLAM::XMLStorage::Restore(network, argv[1]);			
 		}
 		catch (CLAM::XmlStorageErr & e)
@@ -362,6 +363,9 @@ int main( int argc, char** argv )
 		CLAM::Processing& trackVol3 = network.GetProcessing("AudioAmplifier_2");
 		CLAM::Processing& trackVol4 = network.GetProcessing("AudioAmplifier_3");
 		CLAM::Processing* tracks[4] = {&trackVol1, &trackVol2, &trackVol3, &trackVol4};
+		for (int i=0; i<4; i++)
+		{	CLAM::SendFloatToInControl(*tracks[i], "Gain", 0.0);
+		}
 
 
 		//PGAO AMP ADJUSTER
@@ -405,11 +409,16 @@ int main( int argc, char** argv )
 		network.Start();
 		
 		//testing
-		int numPorts = jack_port_connected(jack_port_by_name(jackClient,"system:playback_1"));
-		//const char** ports = jack_get_ports(jackClient, NULL, NULL, NULL);	
-		//printf("%c\n", *jack_port_name(jack_port_by_name(jackClient,*ports)));
-		printf("%i\n", numPorts);
-
+		//int numPorts = jack_port_connected(jack_port_by_name(jackClient,"system:playback_1"));
+		//printf("%i\n", numPorts);
+		const char** ports = jack_get_ports(jackClient, NULL, NULL, NULL);
+		
+		//cchien detects how many people are present
+		for (int i=1; i<5; i++)
+		{	if (3*i+i==sizeof(ports)) numChannels = i;
+		}
+				
+		
 		if(netjackMode) {
 			jack_connect(jackClient, "netjack:capture_1", "client1:AudioSource_1");
 			jack_connect(jackClient, "netjack-01:capture_1", "client1:AudioSource_2");
