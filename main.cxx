@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <cerrno>
 /*#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
+#include <curlpp/Easy.hpp>jack
 #include <curlpp/Options.hpp>
 #include <curlpp/Exception.hpp>*/
 
@@ -50,9 +50,9 @@ double diffTime = 0.0;
 // When a someone is speaking, all others hear only his/her tone, but the speaker hears all others.
 
 
-//PGAO
+//PGAO cchien
 
-inline void playNoise (CLAM::Channelizer* channels[],CLAM::Processing* tones[]){
+inline void playTracks (CLAM::Channelizer* channels[],CLAM::Processing* tracks[]){
 
        while(true){
            //Nobody speaking
@@ -60,26 +60,26 @@ inline void playNoise (CLAM::Channelizer* channels[],CLAM::Processing* tones[]){
            IS_NOT_TALKING(channels[2]->state)&&IS_NOT_TALKING(channels[3]->state)){
        
                for(int i=0; i<4; i++){
-                    CLAM::SendFloatToInControl(*(tones[i]), "Gain", 1.0);
+                    CLAM::SendFloatToInControl(*(tracks[i]), "Gain", 5.0);
                }
        
            }
 	
            //Person speaking
-	       
+	       /*
 	   for (int i=0; i<4; i++) {
 		if(IS_START_TALKING(channels[i]->state)){
-			CLAM::SendFloatToInControl(*(tones[i]), "Gain", 1.0);
+			CLAM::SendFloatToInControl(*(tracks[i]), "Gain", 5.0);
 		}
                else if(IS_STILL_TALKING(channels[i]->state)||IS_STOP_TALKING(channels[i]->state)){
-                                                        CLAM::SendFloatToInControl(*(tones[i]), "Gain", 1.0);
+                                                        CLAM::SendFloatToInControl(*(tracks[i]), "Gain", 5.0);
                }
               else{
-                   CLAM::SendFloatToInControl(*(tones[i]), "Gain", 0.0);
+                   CLAM::SendFloatToInControl(*(tracks[i]), "Gain", 0.0);
               }
 	       
 	       
-           }
+           }*/
 	}
 }
 
@@ -361,7 +361,7 @@ int main( int argc, char** argv )
 		CLAM::Processing& trackVol2 = network.GetProcessing("AudioAmplifier_1");
 		CLAM::Processing& trackVol3 = network.GetProcessing("AudioAmplifier_2");
 		CLAM::Processing& trackVol4 = network.GetProcessing("AudioAmplifier_3");
-		CLAM::Processing* tones[4] = {&trackVol1, &trackVol2, &trackVol3, &trackVol4};
+		CLAM::Processing* tracks[4] = {&trackVol1, &trackVol2, &trackVol3, &trackVol4};
 
 
 		//PGAO AMP ADJUSTER
@@ -404,6 +404,12 @@ int main( int argc, char** argv )
 		
 		network.Start();
 		
+		//testing
+		int numPorts = jack_port_connected(jack_port_by_name(jackClient,"system:playback_1"));
+		//const char** ports = jack_get_ports(jackClient, NULL, NULL, NULL);	
+		//printf("%c\n", *jack_port_name(jack_port_by_name(jackClient,*ports)));
+		printf("%i\n", numPorts);
+
 		if(netjackMode) {
 			jack_connect(jackClient, "netjack:capture_1", "client1:AudioSource_1");
 			jack_connect(jackClient, "netjack-01:capture_1", "client1:AudioSource_2");
@@ -521,7 +527,7 @@ int main( int argc, char** argv )
 		while(1) 
 		{		
 			prevMsg = updateFloorStuff(channels, prevMsg, mixers);
-			playNoise(channels, tones);
+			playTracks(channels, tracks);
 			//adjustAmps(channels, amps);
 
 			//std::cout << "speaketh\t" << myp3.logEnergy << "\t" << myp4.logEnergy << std::endl;
