@@ -20,9 +20,9 @@ namespace CLAM
 class ThreeDConfig : public ProcessingConfig{
 
 public:
-	DYNAMIC_TYPE_USING_INTERFACE (SimpleConfig, 2, ProcessingConfig);
-	DYN_ATTRIBUTE (0, public, int, ReceiverPositionX);
-	DYN_ATTRIBUTE (1, public, int, ReceiverPositionY);
+	DYNAMIC_TYPE_USING_INTERFACE (ThreeDConfig, 2, ProcessingConfig);
+	DYN_ATTRIBUTE (0, public, float, ReceiverPositionX);
+	DYN_ATTRIBUTE (1, public, float, ReceiverPositionY);
 
 protected:	
 	void DefaultInit(){
@@ -30,11 +30,13 @@ protected:
 		Network network;
 		XMLStorage::Restore(network, "/home/rahul/Project/MultiParty/emacspace/SNS5/impulse-response-database-surround-to-stereo.clamnetwork");
 		//XMLStorage::Restore(network, "/home/christine/Project/sns5/windowing.clamnetwork");
-		//XMLStorage::Restore(network, argv[1]);	
+		//XMLStorage::Restore(network, argv[1]);
 
-        AddAll();
+		network.start();	
 
-        UpdateData();
+	        AddAll();
+
+	        UpdateData();
 
 		SetReceiverPositionX(0.0);
 		SetReceiverPositionY(0.0);
@@ -45,30 +47,34 @@ protected:
 
 };
 
-class ThreeD : public CLAM::Processing{
+class ThreeD : public Processing{
 
 private:
-	ThreeDConfig configurator;
+	typedef ThreeDConfig Config;
 	
-	AudioInPort _input;
-	AudioOutPort _output;
+	AudioInPort mIn;
+	AudioOutPort mOut;
 	std::vector< FloatInControl* > mInputControls;
 	std::string _name;
 
 public:
 	ThreeD(const Config& config = Config()) 
-		: _input("Input", this)
-		, _output("Output", this)
+		: mIn("Input", this)
+		, mOut("Output", this)
 	{
-		Configure( configurator );
+		Configure( config );
+	}
+
+	const CLAM::ProcessingConfig & GetConfig() const{
+		return mConfig;
 	}
 
 	bool Do() //for each buffer
 	{
-	
-		_input.Consume();
-		_output.Produce();
+		mIn.Consume();
+		mOut.Produce();
 		return true;
+
 	}
 
 	
@@ -86,6 +92,14 @@ public:
 		return "ThreeD";
 	}
 
+protected:
+	bool ConcreteConfigure(const CLAM::ProcessingConfig & config){
+		CopyAsConcreteConfig(mConfig, config);
+		return true;
+	}
+
+private:
+	Config mConfig;
 
 };
 
