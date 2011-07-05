@@ -20,22 +20,21 @@ namespace CLAM
 class ThreeDConfig : public ProcessingConfig{
 
 public:
-	DYNAMIC_TYPE_USING_INTERFACE (ThreeDConfig, 2, ProcessingConfig);
+	DYNAMIC_TYPE_USING_INTERFACE (SimpleConfig, 2, ProcessingConfig);
 	DYN_ATTRIBUTE (0, public, int, ReceiverPositionX);
 	DYN_ATTRIBUTE (1, public, int, ReceiverPositionY);
 
 protected:	
-	void DefaultInit(void){
+	void DefaultInit(){
 
 		Network network;
 		XMLStorage::Restore(network, "/home/rahul/Project/MultiParty/emacspace/SNS5/impulse-response-database-surround-to-stereo.clamnetwork");
 		//XMLStorage::Restore(network, "/home/christine/Project/sns5/windowing.clamnetwork");
 		//XMLStorage::Restore(network, argv[1]);	
 
-        	AddReceiverPositionX();
-		AddReceiverPositionY();
+        AddAll();
 
-        	UpdateData();
+        UpdateData();
 
 		SetReceiverPositionX(0.0);
 		SetReceiverPositionY(0.0);
