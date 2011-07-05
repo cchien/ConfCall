@@ -408,17 +408,6 @@ int main( int argc, char** argv )
 		
 		network.Start();
 		
-		//testing
-		//int numPorts = jack_port_connected(jack_port_by_name(jackClient,"system:playback_1"));
-		//printf("%i\n", numPorts);
-		const char** ports = jack_get_ports(jackClient, NULL, NULL, NULL);
-		
-		//cchien detects how many people are present
-		for (int i=1; i<5; i++)
-		{	if (3*i+i==sizeof(ports)) numChannels = i;
-		}
-				
-		
 		if(netjackMode) {
 			jack_connect(jackClient, "netjack:capture_1", "client1:AudioSource_1");
 			jack_connect(jackClient, "netjack-01:capture_1", "client1:AudioSource_2");
@@ -448,6 +437,20 @@ int main( int argc, char** argv )
 			jack_connect(jackClient, "client1:AudioSink_1", "system:playback_2");
 			jack_connect(jackClient, "client1:AudioSink_3", "netjack:playback_1");
 			jack_connect(jackClient, "client1:AudioSink_3", "netjack:playback_2");
+		}
+
+		//testing
+		//int numPorts = jack_port_connected(jack_port_by_name(jackClient,"system:playback_1"));
+		//printf("%i\n", numPorts);
+		const char** ports = jack_get_ports(jackClient, NULL, NULL, NULL);
+		
+		//cchien detects how many people are present
+		for (int i=1; i<5; i++)
+		{	if (3*i+i==sizeof(ports)) numChannels = i;
+		}
+
+		for (int i=0; i<sizeof(ports); i++)
+		{	printf(ports[i]); printf("\n");
 		}
 
 
